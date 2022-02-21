@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 
 import PackageDescription
 
@@ -6,13 +6,14 @@ import PackageDescription
 // See: https://bugs.swift.org/browse/SR-13814
 let supportedPlatforms: [Platform] = [
     .macOS,
+    .macCatalyst,
     .iOS,
     .watchOS,
     .tvOS,
+    .driverKit,
     .linux,
     .android,
-    // Disable Windows because of https://bugs.swift.org/browse/SR-13817
-    // .windows,
+    .windows,
     .wasi,
 ]
 
@@ -74,17 +75,13 @@ let package = Package(
             ]
         )
     ],
-    cxxLanguageStandard: .cxx1z
+    cxxLanguageStandard: .cxx17
 )
 
 // MARK: Helpers
 
 extension Array where Element == Platform {
     func except(_ exceptions: [Platform]) -> [Platform] {
-        // See: https://bugs.swift.org/browse/SR-13813
-        let exceptionsDescriptions = exceptions.map(String.init(describing:))
-        return filter { platform in
-            !exceptionsDescriptions.contains(String(describing: platform))
-        }
+        return filter { !exceptions.contains($0) }
     }
 }
